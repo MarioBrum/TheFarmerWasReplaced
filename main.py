@@ -12,6 +12,8 @@ import cactusMultiThread
 import sunflowerMultiThread
 import pumpkinMultiThread
 import carrotsMultiThread
+import policultureMultiThrd
+import logMultiThrd
 
 def harvestTill():
 	harvest()
@@ -82,6 +84,9 @@ while(True):
 		#IMPRIME(f0.run)
 		#IMPRIME(cactusMultiThread.colheita)
 		#IMPRIME(pumpkinMultiThread.colheita)
-		IMPRIME(carrotsMultiThread.colheita)
+		#IMPRIME(carrotsMultiThread.colheita)
+		#IMPRIME(policultureMultiThrd.colheita)
+		IMPRIME(policultureMultiThrd.colheitaTest)
+		#IMPRIME(logMultiThrd.colheita)
 	
 		

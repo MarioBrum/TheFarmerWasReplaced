@@ -1,8 +1,7 @@
 #import moduleIsEven
 #import Math
 import mv #move
-
-##Policulture with set, before Im using dictionary(not ideal)
+import lib
 
 #global var
 companionSet = set()
@@ -26,6 +25,13 @@ def firstFree(conj):
 				return (i,j)
 	return (0,0)
 	
+def firstColumn(conj):
+	i = get_pos_x()
+	for j in range(get_world_size()): 
+		if(not ((i,j) in conj)):
+			return (i,j)
+	return (0,0)
+		
 def harvestTill():
 	harvest()
 	till()
@@ -47,54 +53,73 @@ def semeia():
 		do_a_flip()
 	plant(toPlant)
 	#do_a_flip()
-	if get_water() <= 0.9:
-		use_item(Items.Water)
-	use_item(Items.Fertilizer)
+	lib.fertilWater()
 	
 def colheitaRec():
 	global companionSet
 	while(True):
 		#quick_print(dictMapa)
 		companhia = get_companion()
-		planta = companhia[0]  #companhia da planta i,j
-		planta_x = companhia[1][0] #
-		planta_y = companhia[1][1]
+		if(not (companhia == None)):
+			planta = companhia[0]  #companhia da planta i,j
+			planta_x = companhia[1][0] #
+			planta_y = companhia[1][1]
+		else:
+			planta_x = 0
+			planta_y = 0
+		#planta = companhia[0]  #companhia da planta i,j
+		#planta_x = companhia[1][0] #
+		#planta_y = companhia[1][1]
 		#if(contains(dickMapa,planta_x,planta_y)):
-		if((planta_x,planta_y) in companionSet):
-			firstFreeRetorno = firstFree(companionSet)
-			if(firstFreeRetorno == (0,0)):
+		if((planta_x,planta_y) in companionSet):  #CASO MEU TALE JA ESTEJA PLANTADO
+			firstFreeRetorno = firstColumn(companionSet)
+			if(firstFreeRetorno == (0,0) or len(companionSet) == 32*2):
 				#mv.moveTo(0,0)
 				#mv.moveMap(harvest,harvest)
-				mv.moveTo(0,0)
-				mv.droneInLine(harveste)
-				break
+				#mv.moveTo(0,0)
+				#mv.droneInLine(harveste)
+				#break
+				return
 			planta_x = firstFreeRetorno[0]
 			planta_y = firstFreeRetorno[1]
+			companionSet.add(((planta_x,planta_y)))
 			mv.moveTo(planta_x,planta_y)
 			semeia()
-			companionSet.add(((planta_x,planta_y)))
 		#quick_print("PLANTA:",planta," X:",planta_x," Y:",planta_y)
 		#quick_print("Tamanho dict: ",len(dictMapa))
 		#quick_print("MAH DICK: ",dickMapa)
-		elif(companhia == None):
+		elif(companhia == None): #CASO NAO TENHA COMPANHIA
+			companionSet.add(((planta_x,planta_y)))
 			mv.moveTo(planta_x,planta_y)
 			semeia()
-			companionSet.add(((planta_x,planta_y)))
 		else:
-			mv.moveTo(planta_x,planta_y)
 			companionSet.add(((planta_x,planta_y)))
+			mv.moveTo(planta_x,planta_y)
 			if(get_ground_type() == Grounds.Grassland and planta == Entities.Carrot):
 				#harvest()
 				till()
 				#do_a_flip()
 			plant(planta)
-			#spawn_drone(plantaUp)
-		if(firstFree(companionSet) == (0,0)):
-			mv.moveTo(0,0)
+					#se tem drone deixa ele colher dali
+			if(num_drones() < max_drones()):
+				spawn_drone(colheitaRec)
+		if(firstColumn(companionSet) == (0,0) or len(companionSet) == 32**2):
+			#mv.moveTo(0,0)
 			#mv.moveMap(harvest)
-			mv.droneInLine(harvestUp)
-			break
+			#mv.droneInLine(harvestUp)
+			#break
+			return
 	
+def colheitaTest():
+	mv.droneInLine(harvestUp)
+	mv.moveTo(0,0)
+	semeia() #planta random no inicio
+	global companionSet
+	companionSet.add((0,0))
+	mv.droneInLine(colheitaRec)
+	mv.moveTo(0,0)
+	mv.droneInLine(harvestUp)
+
 #Use if elem in set: para verificar se o conjunto contém um elemento.
 
 #Use for elem in set: para iterar todos os elementos no conjunto.
@@ -109,7 +134,7 @@ def colheita():
 	
 	
 	semeia() #planta random no inicio
-	#global companionMapa
+	global companionSet
 	#companionSet = {(0,0):True}
 
 	#companionSet = set()
@@ -125,43 +150,58 @@ def colheita():
 	while(True):
 		#quick_print(dictMapa)
 		companhia = get_companion()
-		planta = companhia[0]  #companhia da planta i,j
-		planta_x = companhia[1][0] #
-		planta_y = companhia[1][1]
+		if(not (companhia == None)):
+			planta = companhia[0]  #companhia da planta i,j
+			planta_x = companhia[1][0] #
+			planta_y = companhia[1][1]
+		else:
+			planta_x = 0
+			planta_y = 0
 		#if(contains(dickMapa,planta_x,planta_y)):
-		if((planta_x,planta_y) in companionSet):
+		if((planta_x,planta_y) in companionSet):  #CASO MEU TALE JA ESTEJA PLANTADO
 			firstFreeRetorno = firstFree(companionSet)
-			if(firstFreeRetorno == (0,0)):
+			if(firstFreeRetorno == (0,0) or len(companionSet) == get_world_size()**2):
 				#mv.moveTo(0,0)
 				#mv.moveMap(harvest,harvest)
 				mv.moveTo(0,0)
 				mv.droneInLine(harvestUp)
-				break
+				return
+				#break
 			planta_x = firstFreeRetorno[0]
 			planta_y = firstFreeRetorno[1]
+			companionSet.add(((planta_x,planta_y)))
 			mv.moveTo(planta_x,planta_y)
 			semeia()
-			companionSet.add(((planta_x,planta_y)))
+			
 		#quick_print("PLANTA:",planta," X:",planta_x," Y:",planta_y)
 		#quick_print("Tamanho dict: ",len(dictMapa))
 		#quick_print("MAH DICK: ",dickMapa)
-		elif(companhia == None):
+		elif(companhia == None): #CASO NAO TENHA COMPANHIA
+			companionSet.add(((planta_x,planta_y)))
 			mv.moveTo(planta_x,planta_y)
 			semeia()
-			companionSet.add(((planta_x,planta_y)))
 		else:
-			mv.moveTo(planta_x,planta_y)
 			companionSet.add(((planta_x,planta_y)))
+			mv.moveTo(planta_x,planta_y)
 			if(get_ground_type() == Grounds.Grassland and planta == Entities.Carrot):
 				#harvest()
 				till()
 				#do_a_flip()
 			plant(planta)
+			#se tem drone deixa ele colher dali
+			if(num_drones() < max_drones()-3):
+				spawn_drone(colheitaRec)
+				spawn_drone(colheitaRec)
+				spawn_drone(colheitaRec)
+			#redirect main drone
+			firstFreeRetorno = firstFree(companionSet)
+			mv.moveTo(firstFreeRetorno[0],firstFreeRetorno[1])
 			#spawn_drone(plantaUp)
-		if(firstFree(companionSet) == (0,0)):
+		if(firstFree(companionSet) == (0,0) or len(companionSet) == 32**2):
 			mv.moveTo(0,0)
 			#mv.moveMap(harvest)
 			mv.droneInLine(harvestUp)
-			break
+			#break
+			return
 #clear()
 #colheita()

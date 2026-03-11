@@ -6,7 +6,8 @@ def isEven(n):
 def fertilWater():
 	if get_water() <= 0.9:
 		use_item(Items.Water)
-	use_item(Items.Fertilizer)
+	if(num_items(Items.Fertilizer) > 1):
+		use_item(Items.Fertilizer)
 	
 def rnd(n):
 	values = []
