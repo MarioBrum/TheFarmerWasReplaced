@@ -14,6 +14,7 @@ import pumpkinMultiThread
 import carrotsMultiThread
 import policultureMultiThrd
 import logMultiThrd
+import mazeMultThrd
 
 def harvestTill():
 	harvest()
@@ -86,7 +87,10 @@ while(True):
 		#IMPRIME(pumpkinMultiThread.colheita)
 		#IMPRIME(carrotsMultiThread.colheita)
 		#IMPRIME(policultureMultiThrd.colheita)
-		IMPRIME(policultureMultiThrd.colheitaTest)
+		#IMPRIME(policultureMultiThrd.colheitaTest)
 		#IMPRIME(logMultiThrd.colheita)
+		
+		#IMPRIME(mazeMultThrd.colheita)
+		mazeMultThrd.colheita()
 	
 		
